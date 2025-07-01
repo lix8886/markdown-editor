@@ -4,7 +4,14 @@
 
 https://gitee.com/lx__8866/markdown-editor/blob/main/assets/demo.gif
 
-![image](https://gitee.com/lx__8866/markdown-editor/blob/main/assets/demo.gif)
+<img src="https://gitee.com/lx__8866/markdown-editor/blob/main/assets/demo.gif" width="400" alt="演示动画">
+
+![image](./assets/demo1.png)
+![image](./assets/demo2.png)
+![image](./assets/demo3.png)
+![image](./assets/demo4.png)
+![image](./assets/demo5.png)
+
 
 ## 使用方法
 
