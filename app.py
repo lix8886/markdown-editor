@@ -52,6 +52,12 @@ st.html(
     .data-testid="manage-app-button" {
         display:none;
     }
+    ._container_gzau3_1 {
+        display: none !important;
+    }
+    ._profileContainer_gzau3_53 {
+        display: none !important;
+    }
 </style>
 """
 )
