@@ -53,46 +53,6 @@ st.html(
 """
 )
 
-
-def check_port(host, port, timeout=1):
-    try:
-        socket.setdefaulttimeout(timeout)
-        with socket.create_connection((host, port)):
-            return True
-    except Exception:
-        return False
-
-
-def get_ip():
-    """获取当前主机的非回环 IP 地址"""
-    ip_list = []
-    for iface, addrs in psutil.net_if_addrs().items():
-        for addr in addrs:
-            if addr.family == socket.AF_INET and not addr.address.startswith("127."):
-                ip_list.append(addr.address)
-    return ip_list
-
-
-HOST = get_ip()[0]
-URL = f"http://{HOST}:{PORT}"
-
-if "__first_server__" not in st.session_state:
-    st.session_state["__first_server__"] = True
-
-    print(f"正在检查API服务（{URL=}）...")
-    if not check_port(HOST, PORT):
-        subprocess.Popen(
-            ["python", "server.py"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        print("API服务启动成功...")
-        st.toast("API服务启动成功")
-    else:
-        print("API服务已启动")
-        st.toast("API服务已启动")
-
-
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
-components.iframe(URL, height=innerHeight)
+components.iframe('https://markdown.com.cn/editor/', height=innerHeight)
