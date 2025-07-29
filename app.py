@@ -63,4 +63,4 @@ with server_state_lock["api_lanuch"]:
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
-components.iframe("http://localhost:8080", height=innerHeight)
+components.iframe("http://0.0.0.0:8080", height=innerHeight)
