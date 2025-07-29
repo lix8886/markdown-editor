@@ -118,4 +118,4 @@ if "__first_check__" not in st.session_state:
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
-components.iframe(URL, height=innerHeight)
+components.iframe(f'http://{ips[0]}:{port}', height=innerHeight)
