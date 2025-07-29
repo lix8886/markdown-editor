@@ -63,7 +63,7 @@ with server_state_lock["api_lanuch"]:
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
-host = st.context.headers["host"].split(":")[0]
+host = 'http://0.0.0.0'
 port = 8080
 url = f"{host}:{port}"
 print(f'>>> {url=}')
