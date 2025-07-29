@@ -50,13 +50,12 @@ st.html(
 """
 )
 
+PORT = 8080
+HOST = "localhost" if sys.platform == "win32" else "0.0.0.0"
+URL = f"http://{HOST}:{PORT}"
 
-port = "8080"
-host = "localhost" if sys.platform == "win32" else "0.0.0.0"
-URL = f"http://{host}:{port}"
 
-
-def check_port(host, port, timeout=1):
+def check_port(host=HOST, port=PORT, timeout=1):
     try:
         socket.setdefaulttimeout(timeout)
         with socket.create_connection((host, port)):
@@ -67,10 +66,10 @@ def check_port(host, port, timeout=1):
 
 if "__first_check__" not in st.session_state:
     st.session_state["__first_check__"] = True
-    
+
     print(f">>> {URL=}")
     print("正在启动API服务...")
-    if not check_port(*URL.split(":")):
+    if not check_port():
         subprocess.Popen(
             ["python", "server.py"],
             stdout=subprocess.DEVNULL,
@@ -78,7 +77,6 @@ if "__first_check__" not in st.session_state:
         )
     else:
         print("API服务已启动")
-
 
     import socket
     import psutil
@@ -88,11 +86,13 @@ if "__first_check__" not in st.session_state:
         ip_list = []
         for iface, addrs in psutil.net_if_addrs().items():
             for addr in addrs:
-                if addr.family == socket.AF_INET and not addr.address.startswith("127."):
+                if addr.family == socket.AF_INET and not addr.address.startswith(
+                    "127."
+                ):
                     ip_list.append(addr.address)
         return ip_list
 
-    def scan_open_ports(host="127.0.0.1", port_start=1024, port_end=1100):
+    def scan_open_ports(host="localhost", port_start=1024, port_end=1100):
         """扫描指定范围内可用（未占用）的端口"""
         available_ports = []
         for port in range(port_start, port_end + 1):
@@ -105,12 +105,16 @@ if "__first_check__" not in st.session_state:
                     continue  # 端口被占用
         return available_ports
 
-
     ips = get_ip()
     print("本机 IP 地址：", ips)
+    if check_port(ips[0], 8080, timeout=3):
+        print("8080 可访问")
+    else:
+        print("8080 不可访问")
     host = ips[0] if ips else "0.0.0.0"
     ports = scan_open_ports(host, 8000, 89000)
     print(f"{host} 可用端口（8000-8050 范围）有：", ports)
+
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
