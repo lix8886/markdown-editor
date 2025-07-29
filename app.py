@@ -5,6 +5,9 @@ import streamlit as st
 from st_screen_stats import ScreenData
 import streamlit.components.v1 as components
 
+from config import PORT
+
+
 st.set_page_config(
     page_title="Markdown Editor",
     page_icon="🧊",
@@ -70,7 +73,6 @@ def get_ip():
     return ip_list
 
 
-PORT = 8080
 HOST = get_ip()[0]
 URL = f"http://{HOST}:{PORT}"
 
@@ -85,10 +87,10 @@ if "__first_server__" not in st.session_state:
             stderr=subprocess.DEVNULL,
         )
         print("API服务启动成功...")
-        st.toast('API服务启动成功')
+        st.toast("API服务启动成功")
     else:
         print("API服务已启动")
-        st.toast('API服务已启动')
+        st.toast("API服务已启动")
 
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
