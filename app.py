@@ -1,4 +1,4 @@
-import sys
+import psutil
 import socket
 import subprocess
 import streamlit as st
@@ -50,12 +50,8 @@ st.html(
 """
 )
 
-PORT = 8080
-HOST = "localhost" if sys.platform == "win32" else "0.0.0.0"
-URL = f"http://{HOST}:{PORT}"
 
-
-def check_port(host=HOST, port=PORT, timeout=1):
+def check_port(host, port, timeout=1):
     try:
         socket.setdefaulttimeout(timeout)
         with socket.create_connection((host, port)):
@@ -64,58 +60,34 @@ def check_port(host=HOST, port=PORT, timeout=1):
         return False
 
 
-if "__first_check__" not in st.session_state:
-    st.session_state["__first_check__"] = True
+def get_ip():
+    """获取当前主机的非回环 IP 地址"""
+    ip_list = []
+    for iface, addrs in psutil.net_if_addrs().items():
+        for addr in addrs:
+            if addr.family == socket.AF_INET and not addr.address.startswith("127."):
+                ip_list.append(addr.address)
+    return ip_list
 
-    print(f">>> {URL=}")
-    print("正在启动API服务...")
-    if not check_port():
+
+PORT = 8080
+HOST = get_ip()[0]
+
+if "__first_server__" not in st.session_state:
+    st.session_state["__first_server__"] = True
+
+    print("正在检查API服务...")
+    if not check_port(HOST, PORT):
         subprocess.Popen(
             ["python", "server.py"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
+        print("API服务启动成功...")
     else:
         print("API服务已启动")
-
-    import socket
-    import psutil
-
-    def get_ip():
-        """获取当前主机的非回环 IP 地址"""
-        ip_list = []
-        for iface, addrs in psutil.net_if_addrs().items():
-            for addr in addrs:
-                if addr.family == socket.AF_INET and not addr.address.startswith(
-                    "127."
-                ):
-                    ip_list.append(addr.address)
-        return ip_list
-
-    def scan_open_ports(host="localhost", port_start=1024, port_end=1100):
-        """扫描指定范围内可用（未占用）的端口"""
-        available_ports = []
-        for port in range(port_start, port_end + 1):
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                s.settimeout(0.2)
-                try:
-                    s.bind((host, port))
-                    available_ports.append(port)
-                except OSError:
-                    continue  # 端口被占用
-        return available_ports
-
-    ips = get_ip()
-    print("本机 IP 地址：", ips)
-    if check_port(ips[0], 8080, timeout=3):
-        print("8080 可访问")
-    else:
-        print("8080 不可访问")
-    host = ips[0] if ips else "0.0.0.0"
-    ports = scan_open_ports(host, 8000, 89000)
-    print(f"{host} 可用端口（8000-8050 范围）有：", ports)
 
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
-components.iframe(f'http://{ips[0]}:{port}', height=innerHeight)
+components.iframe(f"http://{HOST}/{PORT}", height=innerHeight)
