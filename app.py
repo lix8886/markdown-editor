@@ -63,5 +63,6 @@ with server_state_lock["api_lanuch"]:
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
+host = st.context.headers["host"].split(":")[0]
 server_port = 8080
 components.iframe(f"{host}:{server_port}", height=innerHeight)
