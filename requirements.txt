@@ -3,3 +3,4 @@ streamlit-screen-stats==0.0.82
 streamlit-browser-session-storage==0.0.12
 streamlit-server-state==0.20.2
 streamlit-local-storage
+psutil
