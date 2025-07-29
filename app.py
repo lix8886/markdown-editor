@@ -72,11 +72,12 @@ def get_ip():
 
 PORT = 8080
 HOST = get_ip()[0]
+URL = f"http://{HOST}:{PORT}"
 
 if "__first_server__" not in st.session_state:
     st.session_state["__first_server__"] = True
 
-    print("正在检查API服务...")
+    print(f"正在检查API服务（{URL=}）...")
     if not check_port(HOST, PORT):
         subprocess.Popen(
             ["python", "server.py"],
@@ -84,10 +85,12 @@ if "__first_server__" not in st.session_state:
             stderr=subprocess.DEVNULL,
         )
         print("API服务启动成功...")
+        st.toast('API服务启动成功')
     else:
         print("API服务已启动")
+        st.toast('API服务已启动')
 
 
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
-components.iframe(f"http://{HOST}/{PORT}", height=innerHeight)
+components.iframe(URL, height=innerHeight)
