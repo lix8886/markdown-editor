@@ -8,6 +8,7 @@ import os
 import sys
 import http.server
 import socketserver
+from config import PORT
 
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
@@ -32,12 +33,13 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def main():
-    port = 8080
+    port = PORT
+    host = "localhost" if sys.platform == "win32" else "0.0.0.0"
 
     # 检查端口是否可用
     try:
         with socketserver.TCPServer(("", port), CustomHTTPRequestHandler) as httpd:
-            print(f"服务器启动在 http://0.0.0.0:{port}")
+            print(f"服务器启动在 http://{host}:{port}")
             print(f"当前工作目录: {os.getcwd()}")
             print("按 Ctrl+C 停止服务器")
             print("-" * 50)
