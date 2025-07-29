@@ -49,6 +49,9 @@ st.html(
     .st-key-screen_stats {
         height: 0 !important;
     }
+    .data-testid="manage-app-button" {
+        display:none;
+    }
 </style>
 """
 )
