@@ -2,4 +2,4 @@
 # Automatically rerun script when the file is modified on disk.
 # Default: false
 runOnSave = true
-port = 8502
+port = 8501
