@@ -37,7 +37,7 @@ def main():
     # 检查端口是否可用
     try:
         with socketserver.TCPServer(("", port), CustomHTTPRequestHandler) as httpd:
-            print(f"服务器启动在 http://localhost:{port}")
+            print(f"服务器启动在 http://0.0.0.0:{port}")
             print(f"当前工作目录: {os.getcwd()}")
             print("按 Ctrl+C 停止服务器")
             print("-" * 50)
