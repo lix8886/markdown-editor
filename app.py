@@ -64,5 +64,20 @@ with server_state_lock["api_lanuch"]:
 screen_stats = ScreenData(setTimeout=10).st_screen_data()
 innerHeight = screen_stats["innerHeight"] - 10
 host = st.context.headers["host"].split(":")[0]
-server_port = 8080
-components.iframe(f"{host}:{server_port}", height=innerHeight)
+port = 8080
+url = f"{host}:{port}"
+print(f'>>> {url=}')
+
+import socket
+def check_port(host, port, timeout=2):
+    try:
+        socket.setdefaulttimeout(timeout)
+        with socket.create_connection((host, port)):
+            return True
+    except Exception:
+        return False
+
+if st.button('check'):
+    st.write(f'{url} 访问情况：{check_port(host, port)}')
+
+components.iframe(url, height=innerHeight)
