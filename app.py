@@ -1,8 +1,9 @@
+import sys
+import socket
 import subprocess
 import streamlit as st
 from st_screen_stats import ScreenData
 import streamlit.components.v1 as components
-from streamlit_server_state import server_state, server_state_lock
 
 st.set_page_config(
     page_title="Markdown Editor",
@@ -49,27 +50,13 @@ st.html(
 """
 )
 
-# 全局标识
-with server_state_lock["api_lanuch"]:
-    if "api_lanuch" not in server_state:
-        server_state.api_lanuch = True
-        print("启动API服务...")
-        subprocess.Popen(
-            ["python", "server.py"],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
+
+port = "8080"
+host = "localhost" if sys.platform == "win32" else "0.0.0.0"
+URL = f"http://{host}:{port}"
 
 
-screen_stats = ScreenData(setTimeout=10).st_screen_data()
-innerHeight = screen_stats["innerHeight"] - 10
-host = 'http://0.0.0.0'
-port = 8080
-url = f"{host}:{port}"
-print(f'>>> {url=}')
-
-import socket
-def check_port(host, port, timeout=2):
+def check_port(host, port, timeout=1):
     try:
         socket.setdefaulttimeout(timeout)
         with socket.create_connection((host, port)):
@@ -77,7 +64,22 @@ def check_port(host, port, timeout=2):
     except Exception:
         return False
 
-if st.button('check'):
-    st.write(f'{url} 访问情况：{check_port(host, port)}')
 
-components.iframe(url, height=innerHeight)
+if "__first_check__" not in st.session_state:
+    st.session_state["__first_check__"] = True
+    
+    print(f">>> {URL=}")
+    print("正在启动API服务...")
+    if not check_port(*URL.split(":")):
+        subprocess.Popen(
+            ["python", "server.py"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    else:
+        print("API服务已启动")
+
+
+screen_stats = ScreenData(setTimeout=10).st_screen_data()
+innerHeight = screen_stats["innerHeight"] - 10
+components.iframe(URL, height=innerHeight)
